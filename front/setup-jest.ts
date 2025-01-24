@@ -17,13 +17,28 @@ Object.defineProperty(window, 'getComputedStyle', {
   value: () => ['-webkit-appearance'],
 });
 
+// Mock pour les animations du navigateur
+Object.defineProperty(window, 'CSS', {value: null});
 Object.defineProperty(document.body.style, 'transform', {
   value: () => {
     return {
       enumerable: true,
-      configurable: true,
+      configurable: true
     };
-  },
+  }
+});
+
+// Mock pour element.animate
+Object.defineProperty(HTMLElement.prototype, 'animate', {
+  value: () => ({
+    addEventListener: () => {},
+    play: () => {},
+    cancel: () => {},
+    finish: () => {},
+    onfinish: () => {}
+  }),
+  configurable: true,
+  writable: true
 });
 
 /* output shorter and more meaningful Zone error stack traces */

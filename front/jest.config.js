@@ -24,4 +24,5 @@ module.exports = {
   moduleDirectories: [
     "node_modules"
   ],
+  maxWorkers: "50%",
 };
