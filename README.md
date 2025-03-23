@@ -107,6 +107,4 @@ cd back
 mvn clean test
 ```
 
-## Licence
 
-[Spécifier la licence du projet si applicable]
