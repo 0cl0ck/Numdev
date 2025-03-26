@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,7 +26,8 @@ export class FormComponent implements OnInit {
     private sessionApiService: SessionApiService,
     private sessionService: SessionService,
     private teacherService: TeacherService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {
   }
 
@@ -86,6 +87,8 @@ export class FormComponent implements OnInit {
 
   private exitPage(message: string): void {
     this.matSnackBar.open(message, 'Close', { duration: 3000 });
-    this.router.navigate(['sessions']);
+    this.ngZone.run(() => {
+      this.router.navigate(['sessions']);
+    });
   }
 }
