@@ -1,7 +1,7 @@
 describe('Logout Flow', () => {
   beforeEach(() => {
     cy.visit('/login');
-    
+
     // Intercepter le login
     cy.intercept('POST', '/api/auth/login', {
       body: {
@@ -21,14 +21,14 @@ describe('Logout Flow', () => {
         description: 'Description test',
         date: '2024-01-01',
         teacher_id: 1,
-        users: []
-      }
+        users: [],
+      },
     ]).as('sessions');
 
     cy.get('input[formControlName=email]').type('yoga@studio.com');
     cy.get('input[formControlName=password]').type('test!1234');
     cy.get('button[type=submit]').click();
-    
+
     cy.wait('@login');
     cy.url().should('include', '/sessions');
   });
@@ -36,13 +36,13 @@ describe('Logout Flow', () => {
   it('should logout successfully and redirect to home page', () => {
     // Vérifier que nous sommes bien connectés
     cy.url().should('include', '/sessions');
-    
+
     // Intercepter la requête de déconnexion
     cy.intercept('GET', '/api/session', {
       statusCode: 401,
       body: {
-        message: 'Unauthorized'
-      }
+        message: 'Unauthorized',
+      },
     }).as('unauthorizedRequest');
 
     // Cliquer sur le bouton de déconnexion
