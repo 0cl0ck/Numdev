@@ -87,6 +87,18 @@ public class SessionServiceTest {
     }
 
     @Test
+    void participate_ShouldThrowNotFoundException_WhenUserNotFound() {
+        // Given
+        when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(NotFoundException.class, () -> {
+            sessionService.participate(1L, 1L);
+        });
+    }
+
+    @Test
     void participate_ShouldThrowBadRequestException_WhenUserAlreadyParticipates() {
         // Given
         session.getUsers().add(user);
@@ -115,6 +127,28 @@ public class SessionServiceTest {
     }
 
     @Test
+    void noLongerParticipate_ShouldThrowNotFoundException_WhenSessionNotFound() {
+        // Given
+        when(sessionRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(NotFoundException.class, () -> {
+            sessionService.noLongerParticipate(1L, 1L);
+        });
+    }
+
+    @Test
+    void noLongerParticipate_ShouldThrowBadRequestException_WhenUserNotParticipating() {
+        // Given - session existe mais user ne participe pas
+        when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+
+        // When & Then
+        assertThrows(BadRequestException.class, () -> {
+            sessionService.noLongerParticipate(1L, 1L);
+        });
+    }
+
+    @Test
     void getById_ShouldReturnSession() {
         // Given
         when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
@@ -125,6 +159,18 @@ public class SessionServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(1L, result.getId());
+    }
+
+    @Test
+    void getById_ShouldReturnNull_WhenSessionNotFound() {
+        // Given
+        when(sessionRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // When
+        Session result = sessionService.getById(1L);
+
+        // Then
+        assertNull(result);
     }
 
     @Test
@@ -150,6 +196,7 @@ public class SessionServiceTest {
 
         // Then
         assertNotNull(result);
+        assertEquals(1L, result.getId()); // Vérifie que l'ID a été défini
         verify(sessionRepository).save(session);
     }
 

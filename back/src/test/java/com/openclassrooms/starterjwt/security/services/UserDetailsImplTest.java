@@ -108,4 +108,64 @@ class UserDetailsImplTest {
 
         assertNotEquals(userDetails, userDetails2);
     }
+
+    @Test
+    void testEqualsSameInstance() {
+        // Test la branche "this == o"
+        assertEquals(userDetails, userDetails);
+    }
+
+    @Test
+    void testEqualsWithNull() {
+        // Test la branche "o == null"
+        assertNotEquals(userDetails, null);
+    }
+
+    @Test
+    void testEqualsWithDifferentClass() {
+        // Test la branche "getClass() != o.getClass()"
+        String differentClassObject = "This is a string";
+        assertNotEquals(userDetails, differentClassObject);
+    }
+
+    @Test
+    void testEqualsWithNullId() {
+        // Test avec id null
+        UserDetailsImpl userDetailsWithNullId = UserDetailsImpl.builder()
+                .id(null)
+                .username("test@test.com")
+                .firstName("John")
+                .lastName("Doe")
+                .admin(false)
+                .password("password")
+                .build();
+
+        UserDetailsImpl anotherUserDetailsWithNullId = UserDetailsImpl.builder()
+                .id(null)
+                .username("different@test.com")
+                .firstName("Jane")
+                .lastName("Smith")
+                .admin(true)
+                .password("differentPassword")
+                .build();
+
+        // Deux objets avec id null devraient être égaux selon la logique equals
+        assertEquals(userDetailsWithNullId, anotherUserDetailsWithNullId);
+    }
+
+    @Test
+    void testNotEqualsNullIdWithNonNullId() {
+        // Test id null vs id non null
+        UserDetailsImpl userDetailsWithNullId = UserDetailsImpl.builder()
+                .id(null)
+                .username("test@test.com")
+                .firstName("John")
+                .lastName("Doe")
+                .admin(false)
+                .password("password")
+                .build();
+
+        assertNotEquals(userDetailsWithNullId, userDetails);
+        assertNotEquals(userDetails, userDetailsWithNullId);
+    }
 }
