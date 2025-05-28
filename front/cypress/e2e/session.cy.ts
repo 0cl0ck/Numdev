@@ -18,8 +18,8 @@ describe('Session Management', () => {
         description: 'Description test',
         date: '2024-01-01',
         teacher_id: 1,
-        users: []
-      }
+        users: [],
+      },
     ]).as('sessions');
     cy.get('input[formControlName=email]').type('yoga@studio.com');
     cy.get('input[formControlName=password]').type('test!1234{enter}{enter}');
@@ -46,8 +46,8 @@ describe('Session Management', () => {
         description: 'Description test',
         date: '2024-01-01',
         teacher_id: 1,
-        users: []
-      }
+        users: [],
+      },
     }).as('sessionDetail');
 
     cy.intercept('GET', '/api/teacher/1', {
@@ -56,12 +56,12 @@ describe('Session Management', () => {
         lastName: 'Teacher',
         firstName: 'Test',
         email: 'test@test.com',
-      }
+      },
     });
 
     cy.get('mat-card-actions button[color="primary"]').first().click();
     cy.wait('@sessionDetail');
-    
+
     cy.get('mat-card-title').should('contain', 'Session Test');
     cy.get('mat-card-content').should('contain', 'Description test');
   });
@@ -75,13 +75,13 @@ describe('Session Management', () => {
         description: 'Description test',
         date: '2024-01-01',
         teacher_id: 1,
-        users: []
-      }
+        users: [],
+      },
     }).as('sessionDetail');
 
     // Mock de la suppression
     cy.intercept('DELETE', '/api/session/1', {
-      statusCode: 200
+      statusCode: 200,
     }).as('deleteSession');
 
     // Ajout du mock pour teacher/1
@@ -91,7 +91,7 @@ describe('Session Management', () => {
         lastName: 'Teacher',
         firstName: 'Test',
         email: 'test@test.com',
-      }
+      },
     });
 
     // Navigation vers le détail
@@ -113,8 +113,8 @@ describe('Session Management', () => {
         description: 'Description test',
         date: '2024-01-01',
         teacher_id: 1,
-        users: []
-      }
+        users: [],
+      },
     }).as('sessionDetail');
 
     // Mock des teachers - Ajout du mock pour teacher/1
@@ -124,7 +124,7 @@ describe('Session Management', () => {
         lastName: 'Teacher',
         firstName: 'Test',
         email: 'test@test.com',
-      }
+      },
     });
 
     cy.intercept('GET', '/api/teacher', {
@@ -147,7 +147,7 @@ describe('Session Management', () => {
         date: '2024-12-31',
         description: 'Updated description',
         teacher_id: 1,
-      }
+      },
     }).as('updateSession');
 
     // Clic direct sur le bouton Edit dans les actions de la carte
@@ -156,8 +156,10 @@ describe('Session Management', () => {
 
     // Remplissage du formulaire
     cy.get('input[formControlName=name]').clear().type('Updated Session');
-    cy.get('textarea[formControlName=description]').clear().type('Updated description');
-    
+    cy.get('textarea[formControlName=description]')
+      .clear()
+      .type('Updated description');
+
     // Sauvegarde
     cy.contains('Save').click();
     cy.wait('@updateSession');
