@@ -69,7 +69,31 @@ https://learning.postman.com/docs/getting-started/importing-and-exporting-data/#
 
 ### Tests Frontend
 
-#### Tests E2E
+#### Tests Unitaires et d'Intégration (Jest)
+
+Lancer les tests unitaires :
+```bash
+cd front
+npm run test
+```
+
+Générer le rapport de couverture :
+```bash
+cd front
+npm run test:coverage
+```
+
+Le rapport est disponible ici : `front/coverage/lcov-report/index.html`
+
+Mode watch pour le développement :
+```bash
+cd front
+npm run test:watch
+```
+
+#### Tests E2E (Cypress)
+
+##### Méthode standard :
 
 Lancer les tests E2E :
 ```bash
@@ -85,26 +109,59 @@ npm run e2e:coverage
 
 Le rapport est disponible ici : `front/coverage/lcov-report/index.html`
 
-#### Tests unitaires
+##### Méthode avec instrumentation complète (pour la couverture) :
 
-Lancer les tests unitaires :
+1. Démarrer le serveur en mode instrumenté (nécessaire pour la couverture) :
 ```bash
 cd front
-npm run test
+ng run yoga:serve-coverage
 ```
 
-Mode watch pour le développement :
+2. Dans un autre terminal, lancer les tests avec couverture :
 ```bash
 cd front
-npm run test:watch
+npm run e2e:run
 ```
 
-### Tests Backend
+3. Générer le rapport de couverture :
+```bash
+cd front
+npm run e2e:coverage
+```
 
-Lancer les tests et générer le rapport de couverture Jacoco :
+### Tests Backend (Spring Boot)
+
+Lancer les tests backend :
 ```bash
 cd back
-mvn clean test
+mvn test
 ```
 
+Générer le rapport de couverture JaCoCo :
+```bash
+cd back
+mvn verify
+```
 
+Le rapport est disponible ici : `back/target/site/jacoco/index.html`
+
+## Résultats des Tests
+
+Les taux de couverture actuels sont :
+
+- **Frontend (Jest)** : 
+  - Statements: 99.54%
+  - Branches: 94.11%
+  - Functions: 98.38%
+  - Lines: 100%
+
+- **Backend (Spring Boot/JaCoCo)** : 
+  - 84% de couverture globale
+
+- **Tests E2E (Cypress)** : 
+  - Statements: 93.65%
+  - Branches: 95.45%
+  - Functions: 92.7%
+  - Lines: 92.69%
+
+Total de tests : 210+ tests répartis entre le frontend, backend et E2E.
