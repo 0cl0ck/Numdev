@@ -19,6 +19,7 @@ describe('DetailComponent', () => {
   let component: DetailComponent;
   let fixture: ComponentFixture<DetailComponent>; 
   let service: SessionService;
+  let mockSessionApiService: SessionApiService;
 
   const mockSessionService = {
     sessionInformation: {
@@ -44,6 +45,7 @@ describe('DetailComponent', () => {
     })
       .compileComponents();
       service = TestBed.inject(SessionService);
+      mockSessionApiService = TestBed.inject(SessionApiService);
     fixture = TestBed.createComponent(DetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -62,8 +64,7 @@ describe('DetailComponent', () => {
       teacher_id: 1,
       users: []
     };
-    const sessionApiService = TestBed.inject(SessionApiService);
-    jest.spyOn(sessionApiService, 'detail').mockReturnValue(of(mockSession));
+    jest.spyOn(mockSessionApiService, 'detail').mockReturnValue(of(mockSession));
     
     component.ngOnInit();
     fixture.detectChanges();
@@ -94,5 +95,28 @@ describe('DetailComponent', () => {
     
     const deleteButton = fixture.nativeElement.querySelector('button[color="warn"]');
     expect(deleteButton).toBeFalsy();
+  });
+
+  it('should call window.history.back on back method', () => {
+    const backSpy = jest.spyOn(window.history, 'back');
+    
+    component.back();
+    
+    expect(backSpy).toHaveBeenCalled();
+  });
+
+  it('should call unParticipate and refresh session', () => {
+    // Setup
+    component.sessionId = '1';
+    component.userId = '2';
+    const unParticipateSpy = jest.spyOn(mockSessionApiService, 'unParticipate').mockReturnValue(of(void 0));
+    const fetchSessionSpy = jest.spyOn(component as any, 'fetchSession');
+    
+    // Act
+    component.unParticipate();
+    
+    // Assert
+    expect(unParticipateSpy).toHaveBeenCalledWith('1', '2');
+    expect(fetchSessionSpy).toHaveBeenCalled();
   });
 });
