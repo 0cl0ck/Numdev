@@ -97,9 +97,7 @@ class SessionControllerTest {
     @Test
     void create_CreatesSession() {
         // Préparation
-        when(sessionMapper.toEntity(testSessionDto)).thenReturn(testSession);
-        when(sessionService.create(testSession)).thenReturn(testSession);
-        when(sessionMapper.toDto(testSession)).thenReturn(testSessionDto);
+        when(sessionService.createFromDto(testSessionDto)).thenReturn(testSessionDto);
 
         // Exécution
         ResponseEntity<?> response = sessionController.create(testSessionDto);
@@ -107,15 +105,13 @@ class SessionControllerTest {
         // Vérification
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(testSessionDto, response.getBody());
-        verify(sessionService).create(testSession);
+        verify(sessionService).createFromDto(testSessionDto);
     }
 
     @Test
     void update_UpdatesSession() {
         // Préparation
-        when(sessionMapper.toEntity(testSessionDto)).thenReturn(testSession);
-        when(sessionService.update(1L, testSession)).thenReturn(testSession);
-        when(sessionMapper.toDto(testSession)).thenReturn(testSessionDto);
+        when(sessionService.updateFromDto(1L, testSessionDto)).thenReturn(testSessionDto);
 
         // Exécution
         ResponseEntity<?> response = sessionController.update("1", testSessionDto);
@@ -123,7 +119,7 @@ class SessionControllerTest {
         // Vérification
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(testSessionDto, response.getBody());
-        verify(sessionService).update(1L, testSession);
+        verify(sessionService).updateFromDto(1L, testSessionDto);
     }
 
     @Test

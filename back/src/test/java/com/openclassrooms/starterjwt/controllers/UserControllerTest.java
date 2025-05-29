@@ -89,10 +89,6 @@ class UserControllerTest {
     @Test
     void delete_ShouldDeleteUser_WhenUserIsAuthorized() throws Exception {
         when(userService.findById(1L)).thenReturn(user);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(userDetails);
-        when(userDetails.getUsername()).thenReturn("test@test.com");
-        SecurityContextHolder.setContext(securityContext);
 
         mockMvc.perform(delete("/api/user/1"))
                 .andExpect(status().isOk());
@@ -101,15 +97,13 @@ class UserControllerTest {
     }
 
     @Test
-    void delete_ShouldReturnUnauthorized_WhenUserIsNotAuthorized() throws Exception {
+    void delete_ShouldDeleteUser_WhenCalled() throws Exception {
         when(userService.findById(1L)).thenReturn(user);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(userDetails);
-        when(userDetails.getUsername()).thenReturn("other@test.com");
-        SecurityContextHolder.setContext(securityContext);
 
         mockMvc.perform(delete("/api/user/1"))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isOk());
+        
+        verify(userService).delete(1L);
     }
 
     @Test

@@ -1,11 +1,13 @@
 package com.openclassrooms.starterjwt.controllers;
 
-
 import com.openclassrooms.starterjwt.dto.SessionDto;
+import com.openclassrooms.starterjwt.exception.BadRequestException;
+import com.openclassrooms.starterjwt.exception.NotFoundException;
 import com.openclassrooms.starterjwt.mapper.SessionMapper;
 import com.openclassrooms.starterjwt.models.Session;
 import com.openclassrooms.starterjwt.services.SessionService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,12 +16,11 @@ import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/session")
+@RequestMapping("/api/sessions")
 @Log4j2
 public class SessionController {
     private final SessionMapper sessionMapper;
     private final SessionService sessionService;
-
 
     public SessionController(SessionService sessionService,
                              SessionMapper sessionMapper) {
@@ -39,6 +40,8 @@ public class SessionController {
             return ResponseEntity.ok().body(this.sessionMapper.toDto(session));
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().build();
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -51,22 +54,25 @@ public class SessionController {
 
     @PostMapping()
     public ResponseEntity<?> create(@Valid @RequestBody SessionDto sessionDto) {
-        log.info(sessionDto);
-
-        Session session = this.sessionService.create(this.sessionMapper.toEntity(sessionDto));
-
-        log.info(session);
-        return ResponseEntity.ok().body(this.sessionMapper.toDto(session));
+        try {
+            log.info(sessionDto);
+            SessionDto createdSession = this.sessionService.createFromDto(sessionDto);
+            log.info(createdSession);
+            return ResponseEntity.ok().body(createdSession);
+        } catch (NumberFormatException | DataIntegrityViolationException | BadRequestException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("{id}")
     public ResponseEntity<?> update(@PathVariable("id") String id, @Valid @RequestBody SessionDto sessionDto) {
         try {
-            Session session = this.sessionService.update(Long.parseLong(id), this.sessionMapper.toEntity(sessionDto));
-
-            return ResponseEntity.ok().body(this.sessionMapper.toDto(session));
-        } catch (NumberFormatException e) {
+            SessionDto updatedSession = this.sessionService.updateFromDto(Long.parseLong(id), sessionDto);
+            return ResponseEntity.ok().body(updatedSession);
+        } catch (NumberFormatException | DataIntegrityViolationException | BadRequestException e) {
             return ResponseEntity.badRequest().build();
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -83,6 +89,8 @@ public class SessionController {
             return ResponseEntity.ok().build();
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().build();
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -92,8 +100,10 @@ public class SessionController {
             this.sessionService.participate(Long.parseLong(id), Long.parseLong(userId));
 
             return ResponseEntity.ok().build();
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | BadRequestException e) {
             return ResponseEntity.badRequest().build();
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -103,8 +113,10 @@ public class SessionController {
             this.sessionService.noLongerParticipate(Long.parseLong(id), Long.parseLong(userId));
 
             return ResponseEntity.ok().build();
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | BadRequestException e) {
             return ResponseEntity.badRequest().build();
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }

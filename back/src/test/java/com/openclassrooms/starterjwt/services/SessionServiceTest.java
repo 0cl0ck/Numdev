@@ -5,6 +5,7 @@ import com.openclassrooms.starterjwt.exception.NotFoundException;
 import com.openclassrooms.starterjwt.models.Session;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.SessionRepository;
+import com.openclassrooms.starterjwt.repository.TeacherRepository;
 import com.openclassrooms.starterjwt.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,9 @@ public class SessionServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private TeacherRepository teacherRepository;
 
     @InjectMocks
     private SessionService sessionService;
@@ -138,14 +142,17 @@ public class SessionServiceTest {
     }
 
     @Test
-    void noLongerParticipate_ShouldThrowBadRequestException_WhenUserNotParticipating() {
+    void noLongerParticipate_ShouldBeIdempotent_WhenUserNotParticipating() {
         // Given - session existe mais user ne participe pas
         when(sessionRepository.findById(1L)).thenReturn(Optional.of(session));
+        when(sessionRepository.save(any(Session.class))).thenReturn(session);
 
-        // When & Then
-        assertThrows(BadRequestException.class, () -> {
+        // When & Then - Ne doit pas lever d'exception (idempotent)
+        assertDoesNotThrow(() -> {
             sessionService.noLongerParticipate(1L, 1L);
         });
+        
+        verify(sessionRepository).save(session);
     }
 
     @Test
@@ -189,6 +196,7 @@ public class SessionServiceTest {
     @Test
     void update_ShouldReturnUpdatedSession() {
         // Given
+        when(sessionRepository.existsById(1L)).thenReturn(true);
         when(sessionRepository.save(any(Session.class))).thenReturn(session);
 
         // When

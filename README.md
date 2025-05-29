@@ -145,23 +145,4 @@ mvn verify
 
 Le rapport est disponible ici : `back/target/site/jacoco/index.html`
 
-## Résultats des Tests
 
-Les taux de couverture actuels sont :
-
-- **Frontend (Jest)** : 
-  - Statements: 99.54%
-  - Branches: 94.11%
-  - Functions: 98.38%
-  - Lines: 100%
-
-- **Backend (Spring Boot/JaCoCo)** : 
-  - 84% de couverture globale
-
-- **Tests E2E (Cypress)** : 
-  - Statements: 93.65%
-  - Branches: 95.45%
-  - Functions: 92.7%
-  - Lines: 92.69%
-
-Total de tests : 210+ tests répartis entre le frontend, backend et E2E.
